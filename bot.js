@@ -15,7 +15,14 @@ const client = new Client({
 });
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const CONFIG_FILE = path.resolve('./config.json');
+const DATA_DIR = process.env.DATA_DIR || './';
+
+// Ensure data directory exists
+if (process.env.DATA_DIR && !fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+const CONFIG_FILE = path.resolve(DATA_DIR, 'config.json');
 
 // --- ฟังก์ชันจัดการ Config (บันทึก Channel ID แยกตามเซิร์ฟเวอร์) ---
 function loadConfig() {
@@ -36,7 +43,7 @@ function saveAllowedChannel(guildId, channelId) {
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 }
 
-const SCORES_FILE = path.resolve('./scores.json');
+const SCORES_FILE = path.resolve(DATA_DIR, 'scores.json');
 
 function loadScores() {
   try {
